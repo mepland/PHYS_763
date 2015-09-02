@@ -99,7 +99,6 @@ int main(){
   cout << endl << "Variance = " << variance << endl;
   cout << "Difference from 1/12 = " << variance-(1.0/12.0) << endl;
 
-  // TODO Pair correlations test
     int k = 1;
     double pair_correlation = 0;
 
@@ -126,8 +125,6 @@ int main(){
 
     }while(k>0);
 
-
-  // TODO for the uniform square "test that the distribution is statistically uniform" 
 
 //////////////////////////////////////////////////////////////////
   // Create plots output directories. WARNING system dependent
@@ -178,7 +175,7 @@ int main(){
 
   square_hist->Draw("COLZ");
 
-  c2->Print(OUTPUT_PATH+"/uniform.pdf", "pdf");
+//  c2->Print(OUTPUT_PATH+"/uniform.pdf", "pdf");
   c2->Print(OUTPUT_PATH+"/uniform.png", "png");
 
   cout << endl;
