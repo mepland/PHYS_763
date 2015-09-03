@@ -1,0 +1,74 @@
+
+Enter 'd' to run with default values or 'u' to user specify values
+Seed = 7
+n = 100000000
+
+Mean = 9.11181e-05
+Difference from 0... = 9.11181e-05
+
+Variance = 1.0002
+Difference from 1 = 0.000195236
+
+Now performing pair correlation tests <x_{i+k} x_{i}>, enter invalid k (<=0) to stop.
+
+Enter k: 
+Pair Correlation, k = 1: 3.43229e-05
+Difference from 0... = 3.43229e-05
+
+Enter k: 
+Pair Correlation, k = 2: 8.01726e-05
+Difference from 0... = 8.01726e-05
+
+Enter k: 
+Pair Correlation, k = 3: -0.000109139
+Difference from 0... = -0.000109139
+
+Enter k: 
+Pair Correlation, k = 4: 0.000139384
+Difference from 0... = 0.000139384
+
+Enter k: 
+Pair Correlation, k = 5: 3.84467e-05
+Difference from 0... = 3.84467e-05
+
+Enter k: 
+Pair Correlation, k = 6: -7.64992e-06
+Difference from 0... = -7.64992e-06
+
+Enter k: 
+Pair Correlation, k = 7: -0.00010921
+Difference from 0... = -0.00010921
+
+Enter k: 
+Pair Correlation, k = 8: -0.000172668
+Difference from 0... = -0.000172668
+
+Enter k: 
+Pair Correlation, k = 9: -5.10757e-05
+Difference from 0... = -5.10757e-05
+
+Enter k: Invalid k <= 0, pair correlation tests completed.
+rm: cannot remove `./output/*.pdf': No such file or directory
+rm: cannot remove `./output/*.png': No such file or directory
+
+Applying Class style settings...
+
+Info in <TCanvas::Print>: pdf file ./output/normal.pdf has been created
+Info in <TCanvas::Print>: png file ./output/normal.png has been created
+
+ FCN=198228 FROM MIGRAD    STATUS=CONVERGED     308 CALLS         309 TOTAL
+                     EDM=9.55638e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  amplitude    7.60455e+01   8.45124e-02   4.88073e-03  -6.95406e-04
+   2  x mean      -1.23309e-03   3.88110e-03   1.16867e-04  -1.40523e-01
+   3  x std dev    9.91953e-01   3.83587e-03   1.53964e-04  -4.00247e-02
+   4  y mean       8.07087e-03   3.75521e-03   1.16658e-04   3.73470e-02
+   5  y std dev    9.83843e-01   3.74796e-03   1.53850e-04   1.07735e-01
+
+Reduced Chi2 = 0.00198228
+
+Info in <TCanvas::Print>: png file ./output/normal_fit_3d.png has been created
+
+Success!
+

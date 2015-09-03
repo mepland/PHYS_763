@@ -48,17 +48,18 @@ Pair Correlation, k = 9: 0.249939
 Difference from 1/4 = -6.07843e-05
 
 Enter k: Invalid k <= 0, pair correlation tests completed.
+rm: cannot remove `./output/*.pdf': No such file or directory
+rm: cannot remove `./output/*.png': No such file or directory
 
 Applying Class style settings...
 
-Info in <TCanvas::Print>: pdf file ./output/uniform.pdf has been created
 Info in <TCanvas::Print>: png file ./output/uniform.png has been created
 
- FCN=175590 FROM MIGRAD    STATUS=CONVERGED      17 CALLS          18 TOTAL
-                     EDM=2.38577e-11    STRATEGY= 1      ERROR MATRIX ACCURATE 
+ FCN=175590 FROM MIGRAD    STATUS=CONVERGED      16 CALLS          17 TOTAL
+                     EDM=2.61229e-12    STRATEGY= 1      ERROR MATRIX ACCURATE 
   EXT PARAMETER                                   STEP         FIRST   
   NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
-   1  Constant     5.65855e+01   1.80825e-02   3.69982e-03   3.82006e-04
+   1  Constant     5.65855e+01   1.80825e-02   5.90858e-03   1.26406e-04
 
 Reduced Chi2 = 0.017559
 

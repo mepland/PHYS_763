@@ -154,7 +154,7 @@ int main(){
   // Fit
   TF2 *f_const = new TF2("f_const", const_func,0.0,1.0,0.0,1.0,1);
   f_const->SetParName(0, "Constant");
-  f_const->SetParameters(0, 5.0);
+  f_const->SetParameter(0, n/(nbins*nbins));
 
   // Graphics
 

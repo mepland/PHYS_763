@@ -7,7 +7,7 @@
 #include <TCanvas.h>
 //#include <TLegend.h>
 //#include <TPaveStats.h>
-//#include <TMath.h>
+#include <TMath.h>
 #include <iostream>
 //#include <iomanip>
 //#include <stdio.h>
@@ -35,7 +35,9 @@ using std::rand;
 double my_expectation(double* array, int n, int power);
 double my_pair_correlation(double* array, int n, int k);
 
-Double_t const_func(Double_t *x, Double_t *par);
+Double_t g2(Double_t *x, Double_t *par);
+Double_t fun2(Double_t *x, Double_t *par);
+
 
 int main(){
   cout << endl;
@@ -130,8 +132,6 @@ int main(){
     }while(k>0);
 
 
-  // TODO for the normal square "test that the distribution is statistically normal" 
-
 //////////////////////////////////////////////////////////////////
   // Create plots output directories. WARNING system dependent
   TString OUTPUT_PATH = "./output";
@@ -157,13 +157,23 @@ int main(){
     square_hist->Fill(random_x[i], random_y[i]);
   }
 
-  // TODO Gaus fit
-
   // Fit
-/*  TF2 *f_const = new TF2("f_const", const_func,0.0,1.0,0.0,1.0,1);
-  f_const->SetParName(0, "Constant");
-  f_const->SetParameters(0, 5.0);
-*/
+  TF2 *f_2d_gaus = new TF2("f_2d_gaus", fun2,0.0,1.0,0.0,1.0,5);
+  f_2d_gaus->SetParName(0, "amplitude");
+  f_2d_gaus->SetParName(1, "x mean");
+  f_2d_gaus->SetParName(2, "x std dev");
+  f_2d_gaus->SetParName(3, "y mean");
+  f_2d_gaus->SetParName(4, "y std dev");
+
+  f_2d_gaus->SetParameter(0, n/(nbins*nbins));
+
+  f_2d_gaus->SetParameter(1, 0.0);
+  f_2d_gaus->SetParameter(2, 1.0);
+  f_2d_gaus->SetParameter(3, 0.0);
+  f_2d_gaus->SetParameter(4, 1.0);
+
+
+
   // Graphics
 
   SetClassStyle(); // Set style for plots, see myClassStyle.h, adapted from the ATLAS Experiment style
@@ -187,12 +197,12 @@ int main(){
   c2->Print(OUTPUT_PATH+"/normal.png", "png");
 
   cout << endl;
-//  TFitResultPtr r = square_hist->Fit("f_const", "RS");
+  TFitResultPtr r = square_hist->Fit("f_2d_gaus", "RS");
 
   int dof = n-1-1;
 
-//  Double_t chi2 = r->Chi2(); // to retrieve the fit chi2
-//  cout << endl << "Reduced Chi2 = " << chi2/static_cast<double>(dof) << endl << endl;
+  Double_t chi2 = r->Chi2(); // to retrieve the fit chi2
+  cout << endl << "Reduced Chi2 = " << chi2/static_cast<double>(dof) << endl << endl;
 
   c2->Clear();
 //  square_hist->Draw("LEGO0");
@@ -237,6 +247,18 @@ double my_pair_correlation(double* array, int n, int k){
   return sum/static_cast<double>(n);
 }
 
-Double_t const_func(Double_t *x, Double_t *par){
- return par[0];
-}  
+
+
+Double_t g2(Double_t *x, Double_t *par) {
+   Double_t r1 = Double_t((x[0]-par[1])/par[2]);
+   Double_t r2 = Double_t((x[1]-par[3])/par[4]);
+   return par[0]*TMath::Exp(-0.5*(r1*r1+r2*r2));
+}   
+
+Double_t fun2(Double_t *x, Double_t *par) {
+   Double_t *p1 = &par[0];
+   Double_t result = g2(x,p1);
+   return result;
+}
+
+
