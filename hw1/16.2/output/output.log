@@ -53,20 +53,19 @@ rm: cannot remove `./output/*.png': No such file or directory
 
 Applying Class style settings...
 
-Info in <TCanvas::Print>: pdf file ./output/normal.pdf has been created
 Info in <TCanvas::Print>: png file ./output/normal.png has been created
 
- FCN=198228 FROM MIGRAD    STATUS=CONVERGED     308 CALLS         309 TOTAL
-                     EDM=9.55638e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+ FCN=666375 FROM MIGRAD    STATUS=CONVERGED     285 CALLS         286 TOTAL
+                     EDM=2.81708e-08    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   1.0 per cent
   EXT PARAMETER                                   STEP         FIRST   
   NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
-   1  amplitude    7.60455e+01   8.45124e-02   4.88073e-03  -6.95406e-04
-   2  x mean      -1.23309e-03   3.88110e-03   1.16867e-04  -1.40523e-01
-   3  x std dev    9.91953e-01   3.83587e-03   1.53964e-04  -4.00247e-02
-   4  y mean       8.07087e-03   3.75521e-03   1.16658e-04   3.73470e-02
-   5  y std dev    9.83843e-01   3.74796e-03   1.53850e-04   1.07735e-01
+   1  amplitude    1.02508e+03   1.44812e-01   8.09330e-05  -1.02188e-03
+   2  x mean       9.08801e-05   1.00036e-04   9.10236e-07   1.55615e-01
+   3  x std dev    9.93922e-01   7.06874e-05  -1.27944e-06   2.60588e+00
+   4  y mean       1.52479e-04   1.00034e-04  -2.02296e-06  -1.23828e+00
+   5  y std dev    9.93848e-01   7.09474e-05   1.85504e-06   6.03086e-01
 
-Reduced Chi2 = 0.00198228
+Reduced Chi2 = 0.00666375
 
 Info in <TCanvas::Print>: png file ./output/normal_fit_3d.png has been created
 

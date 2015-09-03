@@ -144,8 +144,8 @@ int main(){
   char buffer[300]; int tmp; (void)tmp; // Cast tmp to void to suppress unused var warning
 
   int nbins = 1000;
-  double axis_min = -1.1;
-  double axis_max = 1.1;
+  double axis_min = -4.0;
+  double axis_max = 4.0;
 
   TH1::SetDefaultSumw2(1); // All hist uncertainty tracking
 
@@ -158,7 +158,7 @@ int main(){
   }
 
   // Fit
-  TF2 *f_2d_gaus = new TF2("f_2d_gaus", fun2,0.0,1.0,0.0,1.0,5);
+  TF2 *f_2d_gaus = new TF2("f_2d_gaus", fun2,-4.0,4.0,-4.0,4.0,5);
   f_2d_gaus->SetParName(0, "amplitude");
   f_2d_gaus->SetParName(1, "x mean");
   f_2d_gaus->SetParName(2, "x std dev");
@@ -193,7 +193,7 @@ int main(){
 
   square_hist->Draw("COLZ");
 
-  c2->Print(OUTPUT_PATH+"/normal.pdf", "pdf");
+//  c2->Print(OUTPUT_PATH+"/normal.pdf", "pdf");
   c2->Print(OUTPUT_PATH+"/normal.png", "png");
 
   cout << endl;

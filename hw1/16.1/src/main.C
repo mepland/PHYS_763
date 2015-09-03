@@ -190,7 +190,7 @@ int main(){
 //  square_hist->Draw("LEGO0");
   square_hist->Draw("SURF20Z");
 
-  c2->Print(OUTPUT_PATH+"/uniform_fit_3d.pdf", "pdf");
+//  c2->Print(OUTPUT_PATH+"/uniform_fit_3d.pdf", "pdf");
   c2->Print(OUTPUT_PATH+"/uniform_fit_3d.png", "png");
 
 

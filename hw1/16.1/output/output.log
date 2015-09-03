@@ -63,7 +63,6 @@ Info in <TCanvas::Print>: png file ./output/uniform.png has been created
 
 Reduced Chi2 = 0.017559
 
-Info in <TCanvas::Print>: pdf file ./output/uniform_fit_3d.pdf has been created
 Info in <TCanvas::Print>: png file ./output/uniform_fit_3d.png has been created
 
 Success!
