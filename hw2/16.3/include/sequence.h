@@ -4,6 +4,14 @@
 #include <random>
 #include <vector>
 
+#include <TH1.h>
+
+#include "myClassStyle.h"
+
+
+// TODO for loops ending values, < or <=, probably doesn't matter...
+// TODO write hist gen code into class
+
 class sequence{
 private:
  
@@ -18,6 +26,9 @@ private:
     double m_tau; // tau
     double m_sigma_M; // sigma_M
     double m_usual_variance; // <s^s> - <s>^2 = <A^2> - <A>^2
+
+    TH1F *m_sequence_hist;
+
 
     std::vector<double> m_sequence;
 
@@ -45,9 +56,9 @@ public:
     double GetSigma_M() { return m_sigma_M; }
     double GetUsual_Variance() { return m_usual_variance; }
 
-    // TODO write hist gen code into class
     std::vector<double> GetSequence() { return m_sequence; }
 
+    TH1F* GetSequence_hist() { return m_sequence_hist; }
 
 };
  
@@ -61,17 +72,30 @@ sequence::sequence(double alpha, int n, std::default_random_engine engine, std::
    if(n <= 0){
    std::cerr << "ERROR: Invalid n!" << std::endl;
    }
-   
+
+   // set private variables   
    m_alpha = alpha;
    m_n = n;
    m_s0 = s0;
 
-   m_sequence.push_back(m_s0); // set s_0
+   // setup sequence hist
+   int nbins = 500;
+   double axis_min = -10.0;
+   double axis_max = 10.0;
 
-   // fill in the rest of the sequence
+   char buffer[300]; int tmp; (void)tmp; // Cast tmp to void to suppress unused var warning
+   tmp = sprintf(buffer, "sequence_hist; #font[52]{s}_{j}; Counts / (%.3g)", ((axis_max-axis_min)/nbins));
+
+   m_sequence_hist = new TH1F("sequence_hist", buffer, nbins, axis_min, axis_max);
+
+   // set s_0
+   m_sequence.push_back(m_s0);
+   m_sequence_hist->Fill(m_sequence.at(0));
+
+   // create the sequence 
    for(int i=1; i<n; i++){
    m_sequence.push_back( m_alpha*m_sequence.at(i-1) + (1.0 - m_alpha)*normal(engine));
-//   std::cout <<  m_sequence.at(i) << std::endl;
+   m_sequence_hist->Fill(m_sequence.at(i));
    }
 
 
@@ -161,7 +185,7 @@ void sequence::tau(){
  
    m_tau = sum;
 
-   // TODO debugging stream
+   // TODO debugging stream, get it to plot or write out to a file
 /*
    for(int t=1; t<std::round(m_n-1); t++){
    std::cout << phiAAt(t) << std::endl;  
