@@ -50,15 +50,19 @@ hsphere::hsphere(int id, double L, double int_std_dev, double std_dev, std::defa
 
 // generate an initial move, prior to checking for overlaps
 void hsphere::Int_Move(){
-   std::normal_distribution<double> normal(m_L/2.0,m_int_std_dev);
-   m_testX = fmod(normal(*m_engine_ptr), m_L);
+   std::normal_distribution<double> normal_int(m_L/2.0,m_int_std_dev);
+   double random = normal_int(*m_engine_ptr);
+   while(random < 0){ random += m_L;} // Make it positive
+   m_testX = fmod(random, m_L); // Make it < L
 }
 
 
 // generate a test move, prior to checking for overlaps
 void hsphere::Test_Move(){
-   std::normal_distribution<double> normal(0.0,m_std_dev);
-   m_testX = fmod((m_X + normal(*m_engine_ptr)), m_L); 
+   std::normal_distribution<double> normal_move(0.0,m_std_dev);
+   double random = m_X + normal_move(*m_engine_ptr);
+   while(random < 0){ random += m_L;} // Make it positive
+   m_testX = fmod(random, m_L); // Make it < L
 }
 
 // After there are no overlaps, accept the move 

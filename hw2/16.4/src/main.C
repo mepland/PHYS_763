@@ -2,9 +2,9 @@
 //#include <TF1.h>
 //#include <TF2.h>
 //#include <TMinuit.h>
-//#include <TH1.h>
+#include <TH1.h>
 //#include <TH2.h>
-//#include <TCanvas.h>
+#include <TCanvas.h>
 //#include <TLegend.h>
 //#include <TPaveStats.h>
 //#include <TMath.h>
@@ -23,10 +23,10 @@
 //#include <TFile.h>
 //#include <THStack.h>
 //#include <TLorentzVector.h>
-//#include <TString.h>
+#include <TString.h>
 //#include <TPad.h>
 //#include <TFitResult.h>
-//#include "myClassStyle.h"
+#include "myClassStyle.h"
 #include "hsphere.h"
 
 
@@ -34,10 +34,12 @@ using std::cout; using std::endl;
 //using std::cin;
 //using std::cerr;
 //using std::string;
-//using std::pow;
+using std::pow;
 
 bool Overlap(double D, hsphere existing_sphere, hsphere test_sphere);
-
+double gx(double x, double D, double L, int n);
+double gjx(double x, int j, double D, double L, int n);
+int factorial(int n);
 
 int main(){
   cout << endl;
@@ -48,13 +50,33 @@ int main(){
   int seed = 7;
 
   // TODO adjust parameters
-  int n = 10;
+  int n = 12; // Factorials of this, can't be large at all...
   double L = 1000.0; // Length
   double D = 10.0; // Ball diameter
 
   double std_dev = L/4.0;
   double int_std_dev = L/6.0;
  
+  double bin_size = 10*D;
+  int nbins = std::round(L/bin_size);
+  bin_size = L/static_cast<double>(nbins);
+
+  int simple_hist[nbins];
+  double bin_min_x, bin_max_x;
+
+  // halting var declarations
+  double bin_ave = 0;
+  std::vector<double> past_bin_ave;
+  double bin_max = 0;
+  double expected = static_cast<double>(n)/static_cast<double>(nbins);
+
+  double bin_ave_ave = 0.0;
+  int bin_ave_ave_n = 0;
+  bool keep_going = true;
+  int count_down = -1;
+
+  int sweep_number = 0;
+
   std::vector<hsphere> spheres;
 
   // Set up the normal random number generator/seed
@@ -95,11 +117,12 @@ int main(){
     spheres.at(i).Accept(); // Accept it
   }
 
+  cout << endl << "Starting Positions Initialized" << endl;
+
 //////////////////////////////////////////////////////////////////
   // Run sweeps till spatial distribution is approx uniform
  
-// do TODO
-
+do{
 //////////////////////////
   // Update every spheres position, going through them randomly
 
@@ -122,9 +145,142 @@ int main(){
 //////////////////////////
   // Check if the spatial distribution is approx uniform yet
 
-// TODO
- 
-//while TODO
+  // reset simple_hist
+  for(int i_x=0; i_x<nbins; i_x++){
+    simple_hist[i_x]=0;
+  }
+  // fill simple hist
+  for(int i_x=0; i_x<nbins; i_x++){
+    bin_min_x = 0.0+i_x*bin_size;
+    bin_max_x = 0.0+(1+i_x)*bin_size;
+
+    for(std::vector<hsphere>::iterator it = spheres.begin(); it != spheres.end(); ++it){
+      if( (bin_min_x <= it->GetX()) && (it->GetX() < bin_max_x) ) simple_hist[i_x] += 1;
+    }
+
+  }
+//////////////////////////
+
+  // compute bin average, max
+  bin_ave = 0;
+  bin_max = 0;
+  for(int i_x=0; i_x<nbins; i_x++){
+    bin_ave += simple_hist[i_x];
+    if( simple_hist[i_x] > bin_max ) bin_max = simple_hist[i_x];
+
+  }
+  bin_ave = bin_ave/nbins;
+
+  // save past 10 bin averages
+  if( sweep_number < 10){
+    past_bin_ave.push_back(bin_ave);
+  }
+  else if(sweep_number >=10){
+    past_bin_ave.erase(past_bin_ave.begin());
+    past_bin_ave.push_back(bin_ave);
+  }
+
+  // compute average of past 10 bin averages
+  bin_ave_ave_n = 0;
+  for(std::vector<double>::iterator it = past_bin_ave.begin(); it != past_bin_ave.end(); ++it){
+    bin_ave_ave_n++;
+    bin_ave_ave += *it;
+  }  
+  bin_ave_ave = bin_ave_ave/static_cast<double>(bin_ave_ave_n);
+
+
+  // Debugging
+  /*
+  cout << endl << "sweep number: " << sweep_number << endl;
+  cout << "bin_ave: " << bin_ave << " bin_ave_ave: " << bin_ave_ave << endl;
+  if (bin_max <=3) cout << "bin_max: " << bin_max << " ceil(1.5*expected): " << std::ceil(1.5*expected) << endl;
+  */
+
+  // check to see if bin_ave <= bin_ave_ave_ave
+  // check to see if bin_max <= ceiling(1.5*expected)
+  // for good measure go 10 more sweeps past when the conditions are meet
+  // always halt after 10000 sweeps no matter what
+
+  if( (bin_ave <= bin_ave_ave) && (bin_max <= std::ceil(1.5*expected)) && (count_down < 0) ){
+    cout << "Halt conditions met on sweep " << sweep_number+1 << ", stopping after 10 more sweeps" << endl;
+    count_down = 11;
+  }
+  if( count_down > 0 ){
+    count_down--;
+  }
+  if( count_down == 0){
+    keep_going = false;
+    cout << endl << "Simulation stoped after " << sweep_number+1 << " sweeps." << endl;
+  }
+  if(sweep_number == 9999){
+    keep_going = false;
+    cout << endl << "Warning! 10,000 sweeps run without meeting halting condition, forcing a halt!!" << endl << endl;
+  }
+
+  sweep_number++;
+}while( keep_going );
+
+
+//////////////////////////////////////////////////////////////////
+  // Create plots output directories. WARNING system dependent
+  TString OUTPUT_PATH = "./output";
+  system("mkdir -p "+OUTPUT_PATH);
+  system("rm "+OUTPUT_PATH+"/*.pdf");
+  system("rm "+OUTPUT_PATH+"/*.png");
+
+  // Create Plots
+  //TH1::SetDefaultSumw2(1); // All hist uncertainty tracking
+  char buffer[300]; int tmp; (void)tmp; // Cast tmp to void to suppress unused var warning
+
+  int k_nbins = n;
+  double k_axis_max = static_cast<double>(n);
+  double k_axis_min= 0;
+
+  tmp = sprintf(buffer, "sim pair cor; #font[52]{k}; Events / %.3g", ((k_axis_max-k_axis_min)/k_nbins));
+  TH1F *sim_pair_cor_hist = new TH1F("sim_pair_cor_hist", buffer, k_nbins, k_axis_min, k_axis_max);
+
+
+//////////////////////////////////////////////////////////////////
+// compute thermo functions
+
+  // TODO PAIR COORELATION ISN'T WORKING, NOT UNDERSTOOD
+  double pair_correlation = 0;
+
+
+  for(int k=1; k<n; k++){
+
+    pair_correlation = 0;
+    for(int i=0; i<n-k; i++){ // stop at n-k so i+k doesn't go out of bounds
+      pair_correlation += (spheres.at(i+k).GetX()*spheres.at(i).GetX()) ;
+    }
+  
+    pair_correlation = pair_correlation/static_cast<double>(n);
+    sim_pair_cor_hist->Fill(static_cast<double>(k),pair_correlation); // fill at k with weight weight = pair_correlation
+    cout << "gx = " << gx(k, D, L, n) << endl;
+  }
+
+   // TODO fill at k with weight = equation result
+
+//////////////////////////////////////////////////////////////////
+// Print Graphics
+
+  SetClassStyle(); // Set style for plots, see myClassStyle.h, adapted from the ATLAS Experiment style
+
+  TCanvas *c1 = new TCanvas("c1", "rectangle", 800, 600); c1->cd(); c1->Clear();
+
+  double margin = 0.18;
+  gPad->SetBottomMargin(margin); gPad->SetTopMargin(margin);
+  gPad->SetLeftMargin(margin); gPad->SetRightMargin(margin);
+
+  sim_pair_cor_hist->GetXaxis()->SetTitleOffset(1.5);
+  sim_pair_cor_hist->GetYaxis()->SetTitleOffset(1.5);
+
+  sim_pair_cor_hist->GetXaxis()->SetNdivisions(n);
+
+  sim_pair_cor_hist->Draw("same PE");
+
+  c1->Print(OUTPUT_PATH+"/pair_correlation.pdf", "pdf");
+  c1->Print(OUTPUT_PATH+"/pair_correlation.png", "png");
 
 
 //////////////////////////////////////////////////////////////////
@@ -141,8 +297,38 @@ bool Overlap(double D, hsphere existing_sphere, hsphere test_sphere){
      return false;
   }
   else{
-//     cout << "OVERLAP" << endl; // TODO debug
      return std::abs( existing_sphere.GetX() - test_sphere.GetTestX() ) < D;
   }
 }
 
+double gx(double x, double D, double L, int n){
+  double sum = 0.0;
+  for(int j=1; j<n-1; j++){
+    sum += gjx(x, j, D, L, n);
+  }
+  return sum;
+}
+
+
+double gjx(double x, int j, double D, double L, int n){
+
+  // make sure we are in the valid range: jD <= x <= L-(n-j)D, if not return zero
+  if ( (j*D <= x) && ( x <= (L-(n-j)*D) ) ){
+    
+    return ((L*factorial(n-1))/(n*pow(L-n*D,n-1)))*((pow(x-j*D,j-1)*pow(L-x-(n-j)*D,n-1-j))/(factorial(j-1)*factorial(n-1-j)));
+  }
+  else{
+
+   if ( j*D > x ) cout << "j = " << j << " Lower gjx bound failed" << endl;
+   if ( x > (L-(n-j)*D) ) cout << "j = " << j << " Upper gjx bound failed" << endl;
+
+
+    return 0;
+  }
+}
+
+
+int factorial(int n){
+  if(n <= 1) return 1;
+  return n*factorial(n-1);
+}
