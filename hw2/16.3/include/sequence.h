@@ -84,9 +84,11 @@ sequence::sequence(double alpha, int n, std::default_random_engine engine, std::
    double axis_max = 10.0;
 
    char buffer[300]; int tmp; (void)tmp; // Cast tmp to void to suppress unused var warning
-   tmp = sprintf(buffer, "sequence_hist; #font[52]{s}_{j}; Counts / (%.3g)", ((axis_max-axis_min)/nbins));
+   char title_buffer[300];
+   tmp = sprintf(title_buffer, "sequence_hist_alpha%.3g;", m_alpha);
+   tmp = sprintf(buffer, "sequence_hist_alpha%.3g; #font[52]{s}_{j}; Counts / (%.3g)", m_alpha, ((axis_max-axis_min)/nbins));
 
-   m_sequence_hist = new TH1F("sequence_hist", buffer, nbins, axis_min, axis_max);
+   m_sequence_hist = new TH1F(title_buffer, buffer, nbins, axis_min, axis_max);
 
    // set s_0
    m_sequence.push_back(m_s0);

@@ -217,7 +217,7 @@ do{
   double bin_size = D;
   double axis_max = L;
   double axis_min= 0;
-  int nbins = std::round(L/bin_size);
+  int nbins = std::round((axis_max-axis_min)/bin_size);
   bin_size = (axis_max-axis_min)/static_cast<double>(nbins);
 
   tmp = sprintf(buffer, "sim pair cor; #font[52]{x}; Events / %.3g", ((axis_max-axis_min)/nbins));
