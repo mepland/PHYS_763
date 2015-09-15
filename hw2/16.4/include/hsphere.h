@@ -8,7 +8,9 @@ private:
  
     hsphere() { } // private default constructor
 
-    double m_id;
+    int m_id;
+
+    double m_pair_sep;
 
     double m_X;
     double m_testX;
@@ -23,10 +25,13 @@ private:
 public:
     hsphere(int id, double L, double int_std_dev, double std_dev, std::default_random_engine* engine_ptr);
 
-    double GetID() { return m_id; }
+    int GetID() { return m_id; }
 
     double GetX() { return m_X; }
     double GetTestX() { return m_testX; }
+
+    double GetPairSep() { return m_pair_sep; }
+    void SetPairSep(double pair_sep) { m_pair_sep = pair_sep; }
 
     void Int_Move();
     void Test_Move();
